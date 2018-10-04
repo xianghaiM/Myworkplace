@@ -1,0 +1,90 @@
+#include<stdio.h>
+#include<math.h>
+#include<algorithm>	
+using namespace std;
+struct point{           
+    double x,y;
+};
+double Distance(point a,point b){
+    return sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+}
+bool cmpy(point a,point b){          
+    return a.y<b.y;
+}
+bool cmpx(point a,point b){      
+    return a.x<b.x;
+}
+double closestPoint(point s[], int low, int high){
+	
+    double d1,d2,d3,d;
+    int mid,i,j,index;   
+    point P[high-low+1];
+    
+    if(high-low==1){           
+        return Distance(s[low],s[high]);
+        }  
+    else if(high - low == 2){           
+        d1=Distance(s[low],s[low+1]);
+        d2=Distance(s[low+1],s[high]);
+        d3=Distance(s[low],s[high]);
+        if((d1<d2)&&(d1<d3)){
+            return d1;
+        }
+        else if(d2<d3){
+            return d2;
+        }
+        else {
+            return d3;
+        } 	 
+    }
+    else{//在中线两边分别找出最小距离 
+    mid=(low+high)/2;       
+    d1=closestPoint(s,low,mid);
+    d2=closestPoint(s,mid+1,high);
+    if(d1<d2){
+        d=d1;
+    }
+    else {
+        d=d2;
+    }
+    
+    
+    index=0;//根据最小距离找出两边之间的最小距离 
+    for(i=mid;(i>=low)&&((s[mid].x-s[i].x)<d);i--)      
+        P[index++]=s[i];
+    for(i=mid+1;(i<=high)&&((s[i].x-s[mid].x)<d);i++)     
+        P[index++]=s[i];
+        
+    sort(P,P + index,cmpy);   
+	                 
+    for(i=0;i<index;i++){
+        for(j=i+1;j<index;j++){
+            if((P[j].y-P[i].y)>=d)
+                break;
+            else {
+                d3=Distance(P[i],P[j]);
+                if(d3<d){
+                    d=d3;
+                }
+            }
+        }
+	}
+    
+    }
+    return d;
+}
+int main(){
+    int N;
+    double minDist;
+    scanf("%d",&N);
+    point p[N];
+    for(int i=0;i<N;i++)
+    scanf("%lf %lf",&p[i].x,&p[i].y);
+    sort(p,p+N,cmpx); 
+//	for(int i = 0; i < N; i++){
+//		printf("{x : %lf, y : %lf}\n", p[i].x, p[i].y);
+//	} 
+    minDist=closestPoint(p,0,N-1);
+    printf("%0.2lf",minDist);
+    return 0;
+}
