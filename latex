@@ -1,0 +1,219 @@
+\documentclass[UTF8]{ctexart}
+    \usepackage{listings}
+    \usepackage{graphicx}
+    \usepackage{tikz}
+    \usetikzlibrary{shadows}
+    \usetikzlibrary{positioning}
+    \usepackage{verbatim}
+    \usepackage{pgfplots}
+    \usetikzlibrary{arrows,shapes}
+
+    \definecolor{darkblue}{rgb}{0.2,0.2,0.6}
+    \definecolor{darkred}{rgb}{0.6,0.1,0.1}
+    \definecolor{darkgreen}{rgb}{0.2,0.6,0.2}
+
+    \usetikzlibrary{shadings,shadows,shapes.arrows}
+
+    \usetikzlibrary{calc}
+    \makeatletter
+    \@namedef{color@3}{blue!20}
+    \@namedef{color@1}{green!70}
+    \@namedef{color@2}{orange!90}
+    \tikzstyle{vertex}=[circle,fill=black!25,draw,minimum size=20pt,inner sep=0pt]
+    \tikzstyle{middlevertex}=[circle,fill=black!25,draw,minimum size=15pt,inner sep=0pt]
+    \tikzstyle{smallvertex}=[circle,fill=black!25,draw,minimum size=10pt,inner sep=0pt]
+    \tikzstyle{selected vertex} = [vertex, draw,fill=red!24]
+    \tikzstyle{blue smallvertex} = [smallvertex, draw,fill=blue]
+    \tikzstyle{red smallvertex} = [smallvertex, draw,fill=red]
+    \tikzstyle{edge} = [draw,thick,->]
+    \tikzstyle{undirectededge} = [draw,thick]
+    \tikzstyle{weight} = [font=\small]
+    \tikzstyle{selected edge} = [draw,line width=3pt,-,red!50]
+    \tikzstyle{ignored edge} = [draw,line width=3pt,-,black!20]
+    \tikzstyle{squarednode}=[draw, fill=blue!20, thick, minimum size=5mm]
+    \tikzstyle{roundnode}=[circle, draw, fill=blue!20, thick, minimum size=5mm]
+    \title{算法作业 第一次}
+    \date{}
+    \author{小小米}
+    \begin{document}
+    \maketitle
+    \section{}
+    \subsection{第三题}
+    Consider an n-node complete binary tree T, where n = 2d − 1 for some d. Each node v of
+T is labeled with a real number xv. You may assume that the real numbers labeling the nodes
+are all distinct. A node v of T is a local minimum if the label xv is less than the label xw for
+all nodes w that are joined to v by an edge.
+You are given such a complete binary tree T, but the labeling is only specified in the following
+implicit way: for each node v, you can determine the value xv by probing the node v. Show
+how to find a local minimum of T using only O(log n) probes to the nodes of T.
+
+    \subsubsection{算法描述和伪代码实现}
+    \begin{enumerate}
+        \item 若T的值小于T的左子树的根节点值且小于右子树根节点的值,则返回T的值
+        \item 若T的值小于左子树的根节点的值大于右子树的根节点的值，则遍历右子树。
+        \item 若T的值大于左子树的根节点的值小于右子树的根节点的值，则遍历左子树。
+        \item 若T的值大于左子树和右子树根节点的值，则遍历左子树或者右子树。
+    \end{enumerate}
+    伪代码实现：\\
+    \begin{lstlisting}[escapeinside=``]
+    findlocalmin( T ){
+     if(T->value < T->left->value and T->value < T->right->value)
+      return  T `的值`;
+    if(T->value < T->left->value and T->value > T->right->value){
+      return  findlocalmin(T `的右子树`)
+    if(T->value > T->left->value and T->value < T->right->value)
+      return findlocalmin(T `的左子树`);
+    if(T->value > T->left->value and T->value > T->right->value)
+      return findlocalmin(T `的左子树` `或` T `的右子树`);
+        }
+    \end{lstlisting}
+    \subsubsection{子问题分解图}
+    最简子问题是只有一个根节点和两个叶子节点的情况。
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale=1., auto,swap]
+    \foreach \pos/\name in {{(0,0)/root}, {(-1.5,-2)/lson}, {(1.5,-2)/rson}}
+            \node[smallvertex,draw=black, fill=red!20] (\name) at \pos {};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {root/lson/{}, root/rson/{}}
+            \path[undirectededge] (\source) -- node[weight] {$\weight$} (\dest);
+%       \draw[dashed, ->] (0,0) arc  (120:60:2);
+
+    \node[above, thick] at (0,0.5) {\tiny 如果根节点的值小于左右子树的根节点的值，返回根节点的值};
+    \node[above] at (0,0.2) {\tiny 子孙节点中是否包含目标节点};
+    \node[below] at (-0.8, -2) {\tiny 子问题};
+    \node[below] at (0.8, -2) {\tiny 子问题};
+    \path(root) -- node[above,sloped] {\tiny T大于左子树小于右子树的值} (lson);
+    \path(root) -- node[above,sloped] {\tiny T小于左子树大于右子树的值} (rson);
+           \end{tikzpicture}
+    \end{figure}
+    \subsubsection{算法正确性证明}
+    \begin{enumerate}
+    对于任何一棵完全二叉树来说，我们都可以找到一个局部最小值。由完全二叉树的定义可知，完全二叉树的左右子树仍然是完全二叉树，所以当不满足条件时，我们将问题简化为对子树的递归，所以完全二叉树的局部最小值一定在子树当中，所以方法可行。
+    \end{enumerate}
+    \subsubsection{时间复杂度分析}
+   T(n)=T(n/2)+C,所以总的时间复杂度为$O(logn)$
+    \subsection{第一题}
+    You are interested in analyzing some hard-to-obtain data from two separate databases. Each
+database contains n numerical values, so there are 2n values total and you may assume that no
+two values are the same. You’d like to determine the median of this set of 2n values, which we
+will define here to be the n
+th smallest value.
+However, the only way you can access these values is through queries to the databases. In
+a single query, you can specify a value k to one of the two databases, and the chosen database
+will return the k
+th smallest value that it contains. Since queries are expensive, you would like
+to compute the median using as few queries as possible.
+Give an algorithm that finds the median value using at most O(log n) queries.
+\\
+
+    \subsubsection{算法描述和伪代码实现}
+    由于A和B的长度都是n，所以总的c长度是2n，本题要求中位数第k小的元素，由于A和B都可以分别进行查询，那么将此问题进行分解，分别在A和B中进行查询，由于是找中位数，所以我们可以每次都将数组分成两部分来查找即可。
+    \begin{enumerate}
+     \item 如果A的中位数大于B的中位数，则只需要将A的中位数左边的元素与B的中位数右边的元素合成一个新的数组。
+     \item 如果A的中位数小于B的中位数，则只需要将A的中位数右边的元素与B的中位数左边的元素组成一个新的数组。   
+    \end{enumerate}
+    伪代码实现如下：\\
+    \begin{lstlisting}[escapeinside=``]
+     search(A,la,ra,B,lb,rb,k){
+         b_n=k/2;
+         a_n=k-b_n;
+         if(A[la+a_n-1]>B[lb+b_n-1]){
+             return search(A,la,la+a_n,B,lb+b_n,rb,k-b_n);
+         else if(A[la+a_n-1]<B[lb+b_n-1]){
+             return search(A,la+a_n,ra,B,lb,lb+b_n,k-a_n);
+         }    
+         }
+     }
+    \end{lstlisting}
+    \subsubsection{子问题分解图}
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale=1., auto,swap]
+    \foreach \pos/\name in {{(0,0)/root}, {(-2.5,-2.2)/lson}, {(2.5,-2.2)/rson}}
+            \node[smallvertex,draw=black, fill=red!20] (\name) at \pos {};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {root/lson/{}, root/rson/{}}
+            \path[undirectededge] (\source) -- node[weight] {$\weight$} (\dest);
+%       \draw[dashed, ->] (0,0) arc  (120:60:2);
+
+    \node[above, thick] at (0,0.5) {\tiny 问题};
+    \node[above] at (0,0.2) {\tiny k=(2n+1)/2 };
+    \node[below] at (-2.5, -2.6) {\tiny A和B下标变化，k变化};
+    \node[below] at (2.5, -2.6) {\tiny  A和B下标变化，k变化 };
+    \path(root) -- node[above,sloped] {\tiny A的中位数小于B的中位数} (lson);
+    \path(root) -- node[above,sloped] {\tiny A的中位数大于B的中位数} (rson);
+           \end{tikzpicture}
+    \end{figure}
+    \subsubsection{算法正确性证明}
+    如果A的中位数大于B的中位数，则只需要将A的中位数左边的元素与B的中位数右边的元素合成一个新的数组。
+    如果A的中位数小于B的中位数，则只需要将A的中位数右边的元素与B的中位数左边的元素组成一个新的数组。
+    不会丢失比较，每次将问题规模减少一半。
+    \subsubsection{时间复杂度分析}
+    T(n)=T(n/2)+c,由于$log2(1)$=0,且d=0,所以复杂度为O（logn）
+    \subsection{第五题}
+    Recall the problem of finding the number of inversions, As in the course, we are given a sequence of n numbers $a_1,\cdot\cdot\cdot,a_n$, which we assume are all distinct, and we define an inversion to be a pair $i<j$ such that $a_i>a_j$.
+    \paragraph{} We motivated the problem of counting inversions as a good measure is too sensitive. Let's call a pair a significant inversion if $i<j$ and $a_i>3a_j$. Given an $O(n logn)$ algorithm to count the number og significant inversions between two orderings.
+    \subsubsection{算法描述和伪代码实现}
+    我们将问题划分为两个子序列，分别求子序列的逆序数，两个子序列合并的时候，如果L[i]$>$3R[j],则L中i右边的数不用再和3R[j]比较，这样节省了比较的次数
+    \begin{lstlisting}[escapeinside=``]
+        Sort-and-Count(A){
+        Divide A into two sub-sequences L and R;
+        (RC L ,L) = Sort-and-Count(L);
+        (RC R ,R) = Sort-and-Count(R);
+        (C,A) = Merge-and-Count(L,R);
+        return (RC = RC L + RC R + C,A);
+        }
+        Merge-and-Count (L,R){
+        RC = 0; i = 0; j = 0;
+        for(k=0;k<lenth[L]+lenth[R]-1;k++){
+        if (L[i] > R[j]){
+        A[k] = R[j];
+        j + +;
+        }
+        else{
+         A[k] = L[i];
+         i + +;
+        }
+        }
+        for(k=0;k<lenth[L]+lenth[R]-1;k++){
+            if(L[i]>3R[j]){
+                RC=RC+lenth(L)-i;
+                j++;
+            }
+            else{
+                i++;
+            }
+        }
+        return (RC, A); 
+       }
+      
+    \end{lstlisting}
+    \subsubsection{子问题分解图}
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale=1., auto,swap]
+    \foreach \pos/\name in {{(0,0)/root}, {(-0.8,-1.5)/lson}, {(0.8,-1.5)/rson}}
+            \node[smallvertex,draw=black, fill=blue!20] (\name) at \pos {};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {root/lson/{}, root/rson/{}}
+            \path[undirectededge] (\source) -- node[weight] {$\weight$} (\dest);
+%       \draw[dashed, ->] (0,0) arc  (120:60:2);
+
+    \node[above, thick] at (0,0.5) {\tiny 问题};
+    \node[above] at (0,0.2) {\tiny 子孙节点中是否包含目标节点};
+    \node[below] at (-0.8, -2) {\tiny 子问题};
+    \node[below] at (0.8, -2) {\tiny 子问题};
+    \path(root) -- node[above,sloped] {\tiny 计算子序列L的逆序数} (lson);
+    \path(root) -- node[above,sloped] {\tiny 计算子序列R的逆序数} (rson);
+    \node[smallvertex,draw=black,fill=red!20](merge) at (0,-3){};
+    \path[undirectededge](lson) -- node[weight]{}(merge);
+    \path[undirectededge](rson) -- node[weight]{}(merge);
+       \end{tikzpicture}
+    \end{figure}
+    \subsubsection{算法正确性证明}
+    在两个子序列已经拍好序的情况下，本算法用双指针来寻找A[i]$>$ 3A[j]的分界点,由于时有序的，当找到这个分界点以后，分界点以后的点不用再判定，一定满足条件，不会丢解，而且简化了比较的次数，因此该算法是正确的。
+    \subsubsection{时间复杂度分析}
+    本算法复杂度计算公式为T(n)=2T(n/2)+O(n),所以算法的复杂度为：O（nlog n ）
+    
+    \end{document}
