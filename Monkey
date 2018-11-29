@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+
+int mok[50000000];
+int ban[50000000];
+
+
+int  compare1(const void *a, const void *b){
+
+    return  *(int*)a-*(int*)b;//升序
+}
+int compare2(const void *a, const void *b){
+    return  *(int*)b-*(int*)a;//降序
+}
+
+int monkey(int o) {
+    int  k = 0;
+    int temp[o];
+    std::qsort(mok,o+1, sizeof(int),compare1);
+    std::qsort(ban,o+1, sizeof(int),compare1);
+    for (int i = 0; i <= o; i++) {
+
+        int d=abs(mok[i]-ban[i]);
+        temp[k++]=d;
+    }
+
+    std::qsort(temp,k, sizeof(int),compare2);
+    return temp[0];
+}
+int main(){
+    int i,j,d;
+    for(i=0;;i++){
+        scanf("%d",&mok[i]);
+
+        if(getchar()=='\n')
+            break;
+    }
+    for(j=0;;j++){
+        scanf("%d",&ban[j]);
+
+        if(getchar()=='\n')
+            break;
+    }
+
+    d=monkey(i);
+   printf("%d",d);
+    return 0;
+}
