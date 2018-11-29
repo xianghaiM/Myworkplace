@@ -1,0 +1,79 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+
+
+int cmp(const void *a, const void *b){
+    return *(int*)b-*(int*)a;//降序
+}
+
+
+//int quicksort(int A[],int l,int n){
+//    int s,e;
+//
+//    if(l<n){
+//        int key=A[l];
+//        s=l;
+//        e=n;
+//        while(s<e){
+//            while (s<e&&A[e]<=key) {
+//                e--;
+//            }
+//            if(s<e){
+//                A[s++]=A[e];
+//            }
+//
+//            while(s<e&&A[s]>=key) {
+//                s++;
+//            }
+//            if(s<e){
+//                A[e--]=A[s];
+//            }
+//        }
+//        A[s]=key;
+//        quicksort(A,l,s-1);
+//        quicksort(A,s+1,n);
+//    }
+//
+//    return 0;
+//}
+
+int river(int A[],int m,int n){
+    int  k=0;
+    int left=0;
+    int right=n-1;
+    int temp[n];
+    //quicksort(A,0,right);
+    std::qsort(A,n, sizeof(int),cmp);
+
+    while(left<=right){
+
+        while(A[left]+A[right]>m && left<right){
+            if(A[left]<=m){
+                temp[k++]=A[left++];
+            }
+
+        }
+        temp[k++]=A[left++]+A[right--];
+        if(left==right)
+            temp[k++]=A[left++];
+    }
+    return k;
+}
+
+
+int main() {
+
+    int n,m;
+    scanf("%d",&n);
+    scanf("%d",&m);
+    int A[n];
+    for(int i=0;i<n;i++){
+        scanf("%d",&A[i]);
+    }
+    printf("%d",river(A,m,n));
+    return 0;
+}
